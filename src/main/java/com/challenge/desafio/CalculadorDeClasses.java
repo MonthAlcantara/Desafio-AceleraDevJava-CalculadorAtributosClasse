@@ -23,6 +23,7 @@ public class CalculadorDeClasses implements Calculavel {
 
         int i = 0;
         for (Field field : fields) {
+            i++;
             if (!field.isAnnotationPresent(Somar.class) && !field.isAnnotationPresent(Somar.class)) {
                 return BigDecimal.ZERO;
             }
@@ -52,6 +53,7 @@ public class CalculadorDeClasses implements Calculavel {
 
         int i = 0;
         for (Field field : fields) {
+            i++;
             if (!field.isAnnotationPresent(Subtrair.class) && !field.isAnnotationPresent(Subtrair.class)) {
                 return BigDecimal.ZERO;
             }
