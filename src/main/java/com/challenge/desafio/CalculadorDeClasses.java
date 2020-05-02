@@ -17,12 +17,13 @@ public class CalculadorDeClasses implements Calculavel {
     public BigDecimal somar(Object object) {
         Class objeto = Object.class; //Peguei a Classe
         Field[] fields = objeto.getFields(); // Peguei os atributos
-        Object[] fieldSomar = new Object[fields.length];
+        BigDecimal[] fieldSomar = new BigDecimal[fields.length];
         Object myObject = new Object();
+        BigDecimal bigDecimal = BigDecimal.ZERO;
 
         int i = 0;
         for (Field field : fields) {
-            if (!field.isAnnotationPresent(Subtrair.class) && !field.isAnnotationPresent(Subtrair.class)) {
+            if (!field.isAnnotationPresent(Somar.class) && !field.isAnnotationPresent(Somar.class)) {
                 return BigDecimal.ZERO;
             }
             if (field.isAnnotationPresent(Somar.class)) {
@@ -30,23 +31,24 @@ public class CalculadorDeClasses implements Calculavel {
                     return BigDecimal.ZERO;
                 } else {
                     try {
-                        fieldSomar[i] = field.get(myObject);
+                        fieldSomar[i] = (BigDecimal) field.get(myObject);
+                        bigDecimal.add(fieldSomar[i]);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return (BigDecimal) Arrays.stream(fieldSomar).iterator();
-
+        return bigDecimal;
     }
 
     @Override
     public BigDecimal subtrair(Object object) {
         Class objeto = Object.class; //Peguei a Classe
         Field[] fields = objeto.getFields(); // Peguei os atributos
-        Object[] fieldSomar = new Object[fields.length];
+        BigDecimal[] fieldSomar = new BigDecimal[fields.length];
         Object myObject = new Object();
+        BigDecimal bigDecimal = BigDecimal.ZERO;
 
         int i = 0;
         for (Field field : fields) {
@@ -58,14 +60,15 @@ public class CalculadorDeClasses implements Calculavel {
                     return BigDecimal.ZERO;
                 } else {
                     try {
-                        fieldSomar[i] = field.get(myObject);
+                        fieldSomar[i] = (BigDecimal) field.get(myObject);
+                        bigDecimal.add(fieldSomar[i]);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return (BigDecimal) Arrays.stream(fieldSomar).iterator();
+        return bigDecimal;
 
     }
 
