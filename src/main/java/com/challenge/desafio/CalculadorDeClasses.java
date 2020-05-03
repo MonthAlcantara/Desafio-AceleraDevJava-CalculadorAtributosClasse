@@ -36,12 +36,12 @@ public class CalculadorDeClasses implements Calculavel {
         BigDecimal total = BigDecimal.ZERO;
 
         for (Field field : fields) {
-            if (field.getAnnotatedType().equals(annotation)) {
-                field.setAccessible(true);
+            if (field.isAnnotationPresent(annotation) && field.getType().equals(BigDecimal.class)) {
                 try {
-                    Object value = classe.getField(field.getName());
-                    total = total.add((BigDecimal) value);
-                } catch (NoSuchFieldException e) {
+                    field.setAccessible(true);
+                    BigDecimal valor = (BigDecimal) field.get(object);
+                    total = total.add(valor);
+                } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
 
