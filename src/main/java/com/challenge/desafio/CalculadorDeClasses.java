@@ -31,27 +31,23 @@ public class CalculadorDeClasses implements Calculavel {
     }
 
     private BigDecimal realizarOperacao(Object object, Class annotation) {
-        Class classe = object.getClass();
-        Field[] fields = classe.getDeclaredFields();
-        Method[] methods = classe.getMethods();
+        Field[] fields = object.getClass().getDeclaredFields();
+        Method[] methods = object.getClass().getMethods();
         BigDecimal total = BigDecimal.ZERO;
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(annotation) && field.getType().equals(BigDecimal.class)) {
                 if (field.isAccessible()) {
                     try {
-                        BigDecimal valor = (BigDecimal) field.get(object);
-                        total = total.add(valor);
+                        total = total.add((BigDecimal) field.get(object));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 } else {
                     for (Method method : methods) {
-                        String nomeMetodo = method.getName();
-                        if (nomeMetodo.toUpperCase().equals("GET".concat(field.getName().toUpperCase()))) {
+                        if (method.getName().toUpperCase().equals("GET".concat(field.getName().toUpperCase()))) {
                             try {
-                                BigDecimal valor = (BigDecimal) method.invoke(object);
-                                total = total.add(valor);
+                                total = total.add((BigDecimal) method.invoke(object));
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
