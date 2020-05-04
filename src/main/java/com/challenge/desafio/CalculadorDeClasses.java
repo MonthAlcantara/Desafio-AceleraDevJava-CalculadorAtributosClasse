@@ -5,6 +5,8 @@ import com.challenge.annotation.Subtrair;
 import com.challenge.interfaces.Calculavel;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 
@@ -31,18 +33,31 @@ public class CalculadorDeClasses implements Calculavel {
     private BigDecimal realizarOperacao(Object object, Class annotation) {
         Class classe = object.getClass();
         Field[] fields = classe.getDeclaredFields();
+        Method[] methods = classe.getMethods();
         BigDecimal total = BigDecimal.ZERO;
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(annotation) && field.getType().equals(BigDecimal.class)) {
-                try {
-                    field.setAccessible(true);
-                    BigDecimal valor = (BigDecimal) field.get(object);
-                    total = total.add(valor);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                if (field.isAccessible()) {
+                    try {
+                        BigDecimal valor = (BigDecimal) field.get(object);
+                        total = total.add(valor);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    for (Method method : methods) {
+                        String nomeMetodo = method.getName();
+                        if (nomeMetodo.toUpperCase().equals("GET".concat(field.getName().toUpperCase()))) {
+                            try {
+                                BigDecimal valor = (BigDecimal) method.invoke(object);
+                                total = total.add(valor);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
-
             }
         }
         return total;
