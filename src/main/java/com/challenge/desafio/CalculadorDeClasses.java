@@ -35,27 +35,21 @@ public class CalculadorDeClasses implements Calculavel {
         Method[] methods = object.getClass().getMethods();
         BigDecimal total = BigDecimal.ZERO;
 
-        for (Field field : fields) {
+        for (Field field : fields)
             if (field.isAnnotationPresent(annotation) && field.getType().equals(BigDecimal.class)) {
-                if (field.isAccessible()) {
-                    try {
-                        total = total.add((BigDecimal) field.get(object));
-                    } catch (IllegalAccessException e) {
+                if (field.isAccessible()) try {
+                    total = ((BigDecimal) field.get(object)).add(total);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                else for (Method method : methods) {
+                    if ("GET".concat(field.getName().toUpperCase()).equals(method.getName().toUpperCase())) try {
+                        total = ((BigDecimal) method.invoke(object)).add(total);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
-                    }
-                } else {
-                    for (Method method : methods) {
-                        if (method.getName().toUpperCase().equals("GET".concat(field.getName().toUpperCase()))) {
-                            try {
-                                total = total.add((BigDecimal) method.invoke(object));
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }
                     }
                 }
             }
-        }
         return total;
     }
 }
